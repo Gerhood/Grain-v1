@@ -1,4 +1,6 @@
 
+import java.util.ArrayList;
+
 import org.sat4j.core.VecInt;
 import org.sat4j.minisat.SolverFactory;
 import org.sat4j.specs.ContradictionException;
@@ -15,33 +17,13 @@ public class grain {
 	static int newVar = 1;
 	static int cutVar = 1;
 	ISolver solver = SolverFactory.newDefault();
-//	final static int MAXVAR = 1000000;
-//	final static int NBCLAUSES = 500000;
 
 	
 
 	String key = "00000001001000110100010101100111100010011010101111001101111011110001001000110100";
 	String IV = "0000000100100011010001010110011110001001101010111100110111101111";
 
-	// public void clockLfsr() {
-	// boolean feedback = LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13]
-	// ^ LFSR[0];
-	// for (int i = 0; i < LFSR.length - 1; i++) {
-	// LFSR[i] = LFSR[i + 1];
-	// }
-	//
-	// LFSR[LFSR.length - 1] = feedback;
-	// }
-	//
-	// public void clockNfsr() {
-	// boolean feedback = LFSR[0] ^ g();
-	// for (int i = 0; i < NFSR.length - 1; i++) {
-	// NFSR[i] = NFSR[i + 1];
-	// }
-	// NFSR[79] = feedback;
-	// }
 
-	// function g
 	
 	public static int getNewVar(){
 		String outPut = "3" + newVar;
@@ -185,7 +167,25 @@ public class grain {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-			
+		}	
+		else {//1 out of 7 Cutting the big equation down
+			clause1[0] = -var1; clause1[1] = -var2; clause1[2] = var3; clause1[3] = m1;
+			clause2[0] = -var1; clause2[1] = var2; clause2[2] = -var3; clause2[3] = m1;
+			clause3[0] = -var1; clause3[1] = var2; clause3[2] = var3; clause3[3] = -m1;
+			clause4[0] = -var1; clause4[1] = -var2; clause4[2] = -var3; clause4[3] = -m1;
+			clause5[0] = var1; clause5[1] = var2; clause5[2] = var3; clause5[3] = m1;
+			clause6[0] = var1; clause6[1] = -var2; clause6[2] = -var3; clause6[3] = m1;
+			clause7[0] = var1; clause7[1] = -var2; clause7[2] = var3; clause7[3] = -m1;
+			clause8[0] = var1; clause8[1] = var2; clause8[2] = -var3; clause8[3] = -m1;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+		}
 			// 2 out of 7 cutting down equation
 			clause1[0] = -m1; clause1[1] = var4; clause1[2] = var5; clause1[3] = m2;
 			clause2[0] = m1; clause2[1] = -var4; clause2[2] = var5; clause2[3] = m2;
@@ -292,142 +292,6 @@ public class grain {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-			
-			
-		}
-		//ELSE IF EQUATION ==1 
-		//
-		//
-		else{
-			//1 out of 7 Cutting the big equation down
-			clause1[0] = -var1; clause1[1] = -var2; clause1[2] = var3; clause1[3] = m1;
-			clause2[0] = -var1; clause2[1] = var2; clause2[2] = -var3; clause2[3] = m1;
-			clause3[0] = -var1; clause3[1] = var2; clause3[2] = var3; clause3[3] = -m1;
-			clause4[0] = -var1; clause4[1] = -var2; clause4[2] = -var3; clause4[3] = -m1;
-			clause5[0] = var1; clause5[1] = var2; clause5[2] = var3; clause5[3] = m1;
-			clause6[0] = var1; clause6[1] = -var2; clause6[2] = -var3; clause6[3] = m1;
-			clause7[0] = var1; clause7[1] = -var2; clause7[2] = var3; clause7[3] = -m1;
-			clause8[0] = var1; clause8[1] = var2; clause8[2] = -var3; clause8[3] = -m1;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			
-			// 2 out of 7 cutting down equation
-			clause1[0] = -m1; clause1[1] = -var4; clause1[2] = var5; clause1[3] = m2;
-			clause2[0] = -m1; clause2[1] = var4; clause2[2] = -var5; clause2[3] = m2;
-			clause3[0] = -m1; clause3[1] = var4; clause3[2] = var5; clause3[3] = -m2;
-			clause4[0] = -m1; clause4[1] = -var4; clause4[2] = -var5; clause4[3] = -m2;
-			clause5[0] = m1; clause5[1] = var4; clause5[2] = var5; clause5[3] = m2;
-			clause6[0] = m1; clause6[1] = -var4; clause6[2] = -var5; clause6[3] = m2;
-			clause7[0] = m1; clause7[1] = -var4; clause7[2] = var5; clause7[3] = -m2;
-			clause8[0] = m1; clause8[1] = var4; clause8[2] = -var5; clause8[3] = -m2;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			
-			//3 out of 7 cutting down
-			clause1[0] = -m2; clause1[1] = -var6; clause1[2] = var7; clause1[3] = m3;
-			clause2[0] = -m2; clause2[1] = var6; clause2[2] = -var7; clause2[3] = m3;
-			clause3[0] = -m2; clause3[1] = var6; clause3[2] = var7; clause3[3] = -m3;
-			clause4[0] = -m2; clause4[1] = -var6; clause4[2] = -var7; clause4[3] = -m3;
-			clause5[0] = m2; clause5[1] = var6; clause5[2] = var7; clause5[3] = m3;
-			clause6[0] = m2; clause6[1] = -var6; clause6[2] = -var7; clause6[3] = m3;
-			clause7[0] = m2; clause7[1] = -var6; clause7[2] = var7; clause7[3] = -m3;
-			clause8[0] = m2; clause8[1] = var6; clause8[2] = -var7; clause8[3] = -m3;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			
-			//4 out of 7 cutting down
-			clause1[0] = -m3; clause1[1] = -lfsrPrim.get(25); clause1[2] = nfsrPrim.get(63); clause1[3] = m4;
-			clause2[0] = -m3; clause2[1] = lfsrPrim.get(25); clause2[2] = -nfsrPrim.get(63); clause2[3] = m4;
-			clause3[0] = -m3; clause3[1] = lfsrPrim.get(25); clause3[2] = nfsrPrim.get(63); clause3[3] = -m4;
-			clause4[0] = -m3; clause4[1] = -lfsrPrim.get(25); clause4[2] = -nfsrPrim.get(63); clause4[3] = -m4;
-			clause5[0] = m3; clause5[1] = lfsrPrim.get(25); clause5[2] = nfsrPrim.get(63); clause5[3] = m4;
-			clause6[0] = m3; clause6[1] = -lfsrPrim.get(25); clause6[2] = -nfsrPrim.get(63); clause6[3] = m4;
-			clause7[0] = m3; clause7[1] = -lfsrPrim.get(25); clause7[2] = nfsrPrim.get(63); clause7[3] = -m4;
-			clause8[0] = m3; clause8[1] = lfsrPrim.get(25); clause8[2] = -nfsrPrim.get(63); clause8[3] = -m4;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			//5 out of 7 cutting down
-			clause1[0] = -m4; clause1[1] = -nfsrPrim.get(1); clause1[2] = nfsrPrim.get(2); clause1[3] = m5;
-			clause2[0] = -m4; clause2[1] = nfsrPrim.get(1); clause2[2] = -nfsrPrim.get(2); clause2[3] = m5;
-			clause3[0] = -m4; clause3[1] = nfsrPrim.get(1); clause3[2] = nfsrPrim.get(2); clause3[3] = -m5;
-			clause4[0] = -m4; clause4[1] = -nfsrPrim.get(1); clause4[2] = -nfsrPrim.get(2); clause4[3] = -m5;
-			clause5[0] = m4; clause5[1] = nfsrPrim.get(1); clause5[2] = nfsrPrim.get(2); clause5[3] = m5;
-			clause6[0] = m4; clause6[1] = -nfsrPrim.get(1); clause6[2] = -nfsrPrim.get(2); clause6[3] = m5;
-			clause7[0] = m4; clause7[1] = -nfsrPrim.get(1); clause7[2] = nfsrPrim.get(2); clause7[3] = -m5;
-			clause8[0] = m4; clause8[1] = nfsrPrim.get(1); clause8[2] = -nfsrPrim.get(2); clause8[3] = -m5;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			
-			//6 out of 7 cutting down
-			clause1[0] = -m5; clause1[1] = -nfsrPrim.get(4); clause1[2] = nfsrPrim.get(10); clause1[3] = m6;
-			clause2[0] = -m5; clause2[1] = nfsrPrim.get(4); clause2[2] = -nfsrPrim.get(10); clause2[3] = m6;
-			clause3[0] = -m5; clause3[1] = nfsrPrim.get(4); clause3[2] = nfsrPrim.get(10); clause3[3] = -m6;
-			clause4[0] = -m5; clause4[1] = -nfsrPrim.get(4); clause4[2] = -nfsrPrim.get(10); clause4[3] = -m6;
-			clause5[0] = m5; clause5[1] = nfsrPrim.get(4); clause5[2] = nfsrPrim.get(10); clause5[3] = m6;
-			clause6[0] = m5; clause6[1] = -nfsrPrim.get(4); clause6[2] = -nfsrPrim.get(10); clause6[3] = m6;
-			clause7[0] = m5; clause7[1] = -nfsrPrim.get(4); clause7[2] = nfsrPrim.get(10); clause7[3] = -m6;
-			clause8[0] = m5; clause8[1] = nfsrPrim.get(4); clause8[2] = -nfsrPrim.get(10); clause8[3] = -m6;
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-			
-			//7 out of 7 cutting down
-			clause1[0] = -m6; clause1[1] = -nfsrPrim.get(31); clause1[2] = nfsrPrim.get(43); clause1[3] = nfsrPrim.get(56);
-			clause2[0] = -m6; clause2[1] = nfsrPrim.get(31); clause2[2] = -nfsrPrim.get(43); clause2[3] = nfsrPrim.get(56);
-			clause3[0] = -m6; clause3[1] = nfsrPrim.get(31); clause3[2] = nfsrPrim.get(43); clause3[3] = -nfsrPrim.get(56);
-			clause4[0] = -m6; clause4[1] = -nfsrPrim.get(31); clause4[2] = -nfsrPrim.get(43); clause4[3] = -nfsrPrim.get(56);
-			clause5[0] = m6; clause5[1] = nfsrPrim.get(31); clause5[2] = nfsrPrim.get(43); clause5[3] = nfsrPrim.get(56);
-			clause6[0] = m6; clause6[1] = -nfsrPrim.get(31); clause6[2] = -nfsrPrim.get(43); clause6[3] = nfsrPrim.get(56);
-			clause7[0] = m6; clause7[1] = -nfsrPrim.get(31); clause7[2] = nfsrPrim.get(43); clause7[3] = -nfsrPrim.get(56);
-			clause8[0] = m6; clause8[1] = nfsrPrim.get(31); clause8[2] = -nfsrPrim.get(43); clause8[3] = -nfsrPrim.get(56);
-			try {
-				solver.addClause(new VecInt(clause1));
-				solver.addClause(new VecInt(clause2));
-				solver.addClause(new VecInt(clause3));
-				solver.addClause(new VecInt(clause4));
-			} catch (ContradictionException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		lfsrPrim.clock();
-		nfsrPrim.clock();
-		
 	}
 	
 	public boolean g() {
@@ -481,7 +345,7 @@ public class grain {
 	public void clockOneTime() {
 		boolean feedbackLFSR = LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
 		boolean feedbackNFSR = LFSR[0] ^ g();
-		boolean keyStream = z();
+
 
 		for (int i = 0; i < LFSR.length - 1; i++) {
 			LFSR[i] = LFSR[i + 1];
@@ -493,10 +357,7 @@ public class grain {
 		NFSR[79] = feedbackNFSR;
 		LFSR[79] = feedbackLFSR;
 
-//		if (keyStream)
-//			System.out.print("1 ");
-//		else
-//			System.out.print("0 ");
+
 	}
 
 	public grain() {
@@ -514,71 +375,97 @@ public class grain {
 		for (int i = IV.length(); i < LFSR.length; i++) {
 			LFSR[i] = true;
 		}
-
-		//clockBasis();
-
 	}
 	
 	public void  solutionFinder(){
 		int[] model = null;
+		String[] help;
+		ArrayList<String> lfsr = new ArrayList<String>();
+		ArrayList<String> nfsr = new ArrayList<String>();
+		
 		IProblem problem = solver;
 		try {
 			if(problem.isSatisfiable())
-			try {
 				 model = problem.findModel();
-			} catch (TimeoutException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 		} catch (TimeoutException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
+		help = new String[model.length];
 		for (int i = 0; i < model.length; i++) {
-			System.out.print(model[i]+" ");
+			help[i] = ""+ model[i];
+		}
+		for (int i = 0; i < model.length; i++) {
+			
+			switch(help[i].charAt(1)){
+			
+			case '1':
+				
+				lfsr.add(help[i].substring(2));
+			
+			break;
+			case '2':
+				nfsr.add(help[i].substring(2));
+			break;
+			}
+		}
+		int[] iv = new int[80];
+		int[] key=new int[Integer.parseInt(nfsr.get(lfsr.size()-1))];
+
+		int counter = 0;
+		int tmp;
+		
+		for (int i = 0; i < iv.length; i++) {
+			tmp = Integer.parseInt(lfsr.get(counter));
+			if(tmp == i){
+				iv[i] = 0;
+				counter++;
+			}
+			else{
+				iv[i] = 1;
+			}
+		}
+		counter = 0;
+		for (int i = 0; i < key.length; i++) {
+			tmp = Integer.parseInt(nfsr.get(counter));
+			if(tmp == i){
+				key[i] = 0;
+				counter++;
+			}
+			else{
+				key[i] = 1;
+			}
+		}
+		System.out.println("LFSR inhalt: ");
+		for (int i = 0; i < iv.length; i++) {
+			System.out.print(iv[i]);
+		}
+		System.out.println();
+		System.out.println("NFSR inhalt: ");
+		for (int i = 0; i < key.length; i++) {
+			System.out.print(key[i]);
 		}
 	}
 
 	public static void main(String[] args) {
+
 		grain g = new grain();
-		for (int i = 0; i < 160; i++) {
-			g.addClauses(g.z() ? 1 : 0);
+		
+		for (int i = 0; i < 100; i++) {
+
+			if(g.z()){
+				g.addClauses(1);
+			}else
+			g.addClauses(0);
+			
 			g.clockOneTime();
+			g.lfsrPrim.clock();
+			g.nfsrPrim.clock();
 		}
 		System.out.println();
 		g.solutionFinder();
-//		ISolver solver = SolverFactory.newDefault();
-
-//		
-//
-//		int[] clause = { 1, -3, 7 };
-//		
-//		int[] clause2 = { -1, 2, 3 };
-//		
-//		try {
-//			solver.addClause(new VecInt(clause));
-//			solver.addClause(new VecInt(clause2));
-//			solver.addAllClauses(null);
-//			
-//		} catch (ContradictionException e) {
-//			e.printStackTrace();
-//		} 
-//
-//		IProblem problem = solver;
-//		try {
-//			if (problem.isSatisfiable()) {
-//				int[] model = problem.findModel();
-//				for (int i = 0; i < model.length; i++) {
-//					
-//					System.out.println("model = "+ model[i] +" ");
-//				}
-//				
-//			}
-//
-//		} catch (TimeoutException e) {
-//
-//			e.printStackTrace();
-//		}
+		System.out.println("\n"+ cutVar+", "+newVar);
 
 	}
 }
