@@ -8,7 +8,7 @@ import org.sat4j.specs.IProblem;
 import org.sat4j.specs.ISolver;
 import org.sat4j.specs.TimeoutException;
 
-public class grain {
+public class Grain {
 
 	boolean[] LFSR = new boolean[80];
 	boolean[] NFSR = new boolean[80];
@@ -22,6 +22,67 @@ public class grain {
 	String IV = "0000000100100011010001010110011110001001101010111100110111101111";
 
 
+	public Grain() {
+		if (key.length() != 80) {
+			System.out.println("der key ist nicht 80 bits lang");
+		}
+		for (int i = 0; i < key.length(); i++) {
+			NFSR[i] = key.charAt(i) == '1' ? true : false;
+		}
+
+		for (int i = 0; i < IV.length(); i++) {
+			LFSR[i] = IV.charAt(i) == '1' ? true : false;
+		}
+
+		for (int i = IV.length(); i < LFSR.length; i++) {
+			LFSR[i] = true;
+		}
+	}
+	
+	public boolean g() {
+		boolean g;
+		g = NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
+				^ NFSR[0] ^ (NFSR[63] & NFSR[60]) ^ (NFSR[37] & NFSR[33]) ^ (NFSR[15] & NFSR[9])
+				^ (NFSR[60] & NFSR[52] & NFSR[45]) ^ (NFSR[33] & NFSR[28] & NFSR[21])
+				^ (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9]) ^ (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33])
+				^ (NFSR[63] & NFSR[60] & NFSR[21] & NFSR[15]) ^ (NFSR[63] & NFSR[60] & NFSR[52] & NFSR[45] & NFSR[37])
+				^ (NFSR[33] & NFSR[28] & NFSR[21] & NFSR[15] & NFSR[9])
+				^ (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21]);
+		return g;
+	}
+
+	// generates the streamkey z's
+	public boolean z() {
+		boolean z;
+
+		z = (LFSR[3] & LFSR[64]) ^ (LFSR[46] & LFSR[64]) ^ (NFSR[63] & LFSR[64]) ^ (LFSR[46] & LFSR[25] & LFSR[3])^ (LFSR[46] & LFSR[64] & LFSR[3])
+				^ (LFSR[46] & NFSR[63] & LFSR[3]) ^ (LFSR[46] & NFSR[63] & LFSR[25]) ^ (LFSR[46] & NFSR[63] & LFSR[64])
+				^ LFSR[25] ^ NFSR[63] ^ NFSR[1] ^ NFSR[2] ^ NFSR[4] ^ NFSR[10] ^ NFSR[31] ^ NFSR[43] ^ NFSR[56];
+
+		
+		return z;
+	}
+
+
+	public void clockOneTime() {
+		boolean feedbackLFSR = LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
+		boolean feedbackNFSR = LFSR[0] ^ g();
+
+
+		for (int i = 0; i < LFSR.length - 1; i++) {
+			LFSR[i] = LFSR[i + 1];
+		}
+		for (int i = 0; i < NFSR.length - 1; i++) {
+			NFSR[i] = NFSR[i + 1];
+		}
+
+		NFSR[79] = feedbackNFSR;
+		LFSR[79] = feedbackLFSR;
+
+
+	}
+
+	
 	
 	public static int getNewVar(){
 		String outPut = "3" + newVar;
@@ -361,65 +422,7 @@ public class grain {
 			
 	}
 	
-	public boolean g() {
-		boolean g;
-		g = NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
-				^ NFSR[0] ^ (NFSR[63] & NFSR[60]) ^ (NFSR[37] & NFSR[33]) ^ (NFSR[15] & NFSR[9])
-				^ (NFSR[60] & NFSR[52] & NFSR[45]) ^ (NFSR[33] & NFSR[28] & NFSR[21])
-				^ (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9]) ^ (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33])
-				^ (NFSR[63] & NFSR[60] & NFSR[21] & NFSR[15]) ^ (NFSR[63] & NFSR[60] & NFSR[52] & NFSR[45] & NFSR[37])
-				^ (NFSR[33] & NFSR[28] & NFSR[21] & NFSR[15] & NFSR[9])
-				^ (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21]);
-		return g;
-	}
-
-	// generates the streamkey z's
-	public boolean z() {
-		boolean z;
-
-		z = (LFSR[3] & LFSR[64]) ^ (LFSR[46] & LFSR[64]) ^ (NFSR[63] & LFSR[64]) ^ (LFSR[46] & LFSR[25] & LFSR[3])^ (LFSR[46] & LFSR[64] & LFSR[3])
-				^ (LFSR[46] & NFSR[63] & LFSR[3]) ^ (LFSR[46] & NFSR[63] & LFSR[25]) ^ (LFSR[46] & NFSR[63] & LFSR[64])
-				^ LFSR[25] ^ NFSR[63] ^ NFSR[1] ^ NFSR[2] ^ NFSR[4] ^ NFSR[10] ^ NFSR[31] ^ NFSR[43] ^ NFSR[56];
-
-		
-		return z;
-	}
-
-
-	public void clockOneTime() {
-		boolean feedbackLFSR = LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
-		boolean feedbackNFSR = LFSR[0] ^ g();
-
-
-		for (int i = 0; i < LFSR.length - 1; i++) {
-			LFSR[i] = LFSR[i + 1];
-		}
-		for (int i = 0; i < NFSR.length - 1; i++) {
-			NFSR[i] = NFSR[i + 1];
-		}
-
-		NFSR[79] = feedbackNFSR;
-		LFSR[79] = feedbackLFSR;
-
-
-	}
-
-	public grain() {
-		if (key.length() != 80) {
-			System.out.println("der key ist nicht 80 bits lang");
-		}
-		for (int i = 0; i < key.length(); i++) {
-			NFSR[i] = key.charAt(i) == '1' ? true : false;
-		}
-
-		for (int i = 0; i < IV.length(); i++) {
-			LFSR[i] = IV.charAt(i) == '1' ? true : false;
-		}
-
-		for (int i = IV.length(); i < LFSR.length; i++) {
-			LFSR[i] = true;
-		}
-	}
+	
 	
 	public void  solutionFinder(){
 		int[] model = null;
@@ -433,14 +436,13 @@ public class grain {
 				 model = problem.findModel();
 			
 		} catch (TimeoutException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		help = new String[model.length];
 		for (int i = 0; i < model.length; i++) {
 			help[i] = ""+ model[i];
 		}
-		for (int i = 0; i < model.length; i++) {
+		for (int i = 0; i < help.length; i++) {
 			if(help[i].charAt(0)=='-'){
 			switch(help[i].charAt(1)){
 				case '1':
@@ -479,14 +481,14 @@ public class grain {
 			}
 		}
 		counter = 0;
-		for (int i = 0; i < key.length; i++) {
+		for (int i = 1; i < key.length+1; i++) {
 			tmp = Integer.parseInt(nfsr.get(counter));
 			if(tmp == i){
-				key[i] = 0;
+				key[i-1] = 0;
 				counter++;
 			}
 			else{
-				key[i] = 1;
+				key[i-1] = 1;
 			}
 		}
 		System.out.println("IV: ");
@@ -502,7 +504,7 @@ public class grain {
 
 	public static void main(String[] args) {
 
-		grain g = new grain();
+		Grain g = new Grain();
 		
 		for (int i = 0; i < 1000; i++) {
 
