@@ -39,9 +39,9 @@ public class Grain {
 		}
 	}
 	
-	public boolean g() {
+	public boolean feedbackNFSR() {
 		boolean g;
-		g = NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
+		g = LFSR[0] ^ NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
 				^ NFSR[0] ^ (NFSR[63] & NFSR[60]) ^ (NFSR[37] & NFSR[33]) ^ (NFSR[15] & NFSR[9])
 				^ (NFSR[60] & NFSR[52] & NFSR[45]) ^ (NFSR[33] & NFSR[28] & NFSR[21])
 				^ (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9]) ^ (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33])
@@ -50,9 +50,13 @@ public class Grain {
 				^ (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21]);
 		return g;
 	}
+	
+	public boolean feedbackLFSR(){
+		return LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
+	}
 
 	// generates the streamkey z's
-	public boolean z() {
+	public boolean output() {
 		boolean z;
 
 		z = (LFSR[3] & LFSR[64]) ^ (LFSR[46] & LFSR[64]) ^ (NFSR[63] & LFSR[64]) ^ (LFSR[46] & LFSR[25] & LFSR[3])^ (LFSR[46] & LFSR[64] & LFSR[3])
@@ -65,8 +69,8 @@ public class Grain {
 
 
 	public void clockOneTime() {
-		boolean feedbackLFSR = LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
-		boolean feedbackNFSR = LFSR[0] ^ g();
+		boolean feedbackLFSR = feedbackLFSR();
+		boolean feedbackNFSR = feedbackNFSR();
 
 
 		for (int i = 0; i < LFSR.length - 1; i++) {
@@ -97,7 +101,11 @@ public class Grain {
 		
 	}
 	
-	public void addClauses(int z){
+	public void addClauses(){			//adding Clauses
+		
+		
+		
+		//OutPutbased Clauses
 		
 		//1
 		int var1 = getNewVar();
@@ -224,8 +232,8 @@ public class Grain {
 		int[] clause7 = new int[4];
 		int[] clause8 = new int[4];
 		
-		if(z == 0){
-			//1 out of 7 Cutting the big equation down (Actually 8 cases forgot one varialbe)
+		if(!output()){
+			//1 out of 7 Cutting the big equation down (Actually 8 cases forgot one varialbe) outputbased
 			clause1[0] = -var1; clause1[1] = var2; clause1[2] = var3; clause1[3] = m1;
 			clause2[0] = var1; clause2[1] = -var2; clause2[2] = var3; clause2[3] = m1;
 			clause3[0] = var1; clause3[1] = var2; clause3[2] = -var3; clause3[3] = m1;
@@ -247,7 +255,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 		}	
-		else {//1 out of 7 Cutting the big equation down
+		else {//1 out of 7 Cutting the big equation down outputbased
 			clause1[0] = -var1; clause1[1] = -var2; clause1[2] = var3; clause1[3] = m1;
 			clause2[0] = -var1; clause2[1] = var2; clause2[2] = -var3; clause2[3] = m1;
 			clause3[0] = -var1; clause3[1] = var2; clause3[2] = var3; clause3[3] = -m1;
@@ -269,7 +277,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 		}
-			// 2 out of 7 cutting down equation
+			// 2 out of 7 cutting down equation outputbased
 			clause1[0] = -m1; clause1[1] = var4; clause1[2] = var5; clause1[3] = m2;
 			clause2[0] = m1; clause2[1] = -var4; clause2[2] = var5; clause2[3] = m2;
 			clause3[0] = m1; clause3[1] = var4; clause3[2] = -var5; clause3[3] = m2;
@@ -291,7 +299,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
-			//3 out of 7 cutting down
+			//3 out of 7 cutting down outputbased
 			clause1[0] = -m2; clause1[1] = var6; clause1[2] = var7; clause1[3] = m3;
 			clause2[0] = m2; clause2[1] = -var6; clause2[2] = var7; clause2[3] = m3;
 			clause3[0] = m2; clause3[1] = var6; clause3[2] = -var7; clause3[3] = m3;
@@ -313,7 +321,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
-			//4 out of 7 cutting down
+			//4 out of 7 cutting down outputbased
 			clause1[0] = -m3; clause1[1] = lfsrPrim.get(25); clause1[2] = nfsrPrim.get(63); clause1[3] = m4;
 			clause2[0] = m3; clause2[1] = -lfsrPrim.get(25); clause2[2] = nfsrPrim.get(63); clause2[3] = m4;
 			clause3[0] = m3; clause3[1] = lfsrPrim.get(25); clause3[2] = -nfsrPrim.get(63); clause3[3] = m4;
@@ -334,7 +342,7 @@ public class Grain {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-			//5 out of 7 cutting down
+			//5 out of 7 cutting down outputbased
 			clause1[0] = -m4; clause1[1] = nfsrPrim.get(1); clause1[2] = nfsrPrim.get(2); clause1[3] = m5;
 			clause2[0] = m4; clause2[1] = -nfsrPrim.get(1); clause2[2] = nfsrPrim.get(2); clause2[3] = m5;
 			clause3[0] = m4; clause3[1] = nfsrPrim.get(1); clause3[2] = -nfsrPrim.get(2); clause3[3] = m5;
@@ -356,7 +364,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
-			//6 out of 7 cutting down
+			//6 out of 7 cutting down outputbased
 			clause1[0] = -m5; clause1[1] = nfsrPrim.get(4); clause1[2] = nfsrPrim.get(10); clause1[3] = m6;
 			clause2[0] = m5; clause2[1] = -nfsrPrim.get(4); clause2[2] = nfsrPrim.get(10); clause2[3] = m6;
 			clause3[0] = m5; clause3[1] = nfsrPrim.get(4); clause3[2] = -nfsrPrim.get(10); clause3[3] = m6;
@@ -378,7 +386,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
-			//7 out of 7 cutting down
+			//7 out of 7 cutting down  outputbased
 			clause1[0] = -m6; clause1[1] = nfsrPrim.get(31); clause1[2] = nfsrPrim.get(43); clause1[3] = m7;
 			clause2[0] = m6; clause2[1] = -nfsrPrim.get(31); clause2[2] = nfsrPrim.get(43); clause2[3] = m7;
 			clause3[0] = m6; clause3[1] = nfsrPrim.get(31); clause3[2] = -nfsrPrim.get(43); clause3[3] = m7;
@@ -400,7 +408,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
-			//The aditional one 8 out of 8
+			//The aditional one 8 out of 8  outpubased
 			clause1 = new int[3];
 			clause2 = new int[3];
 			clause3 = new int[3];
@@ -416,6 +424,559 @@ public class Grain {
 				solver.addClause(new VecInt(clause2));
 				solver.addClause(new VecInt(clause3));
 				solver.addClause(new VecInt(clause4));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			
+			
+			//Lfsr Feedbackbased clauses	LFSR[62] ^ LFSR[51] ^ LFSR[38] ^ LFSR[23] ^ LFSR[13] ^ LFSR[0];
+			m1 = getCutVar();
+			m2 = getCutVar();								
+			
+			clause1 = new int[4];
+			clause2 = new int[4];
+			clause3 = new int[4];
+			clause4 = new int[4];
+			clause5 = new int[4];
+			clause6 = new int[4];
+			clause7 = new int[4];
+			clause8 = new int[4];
+			
+			clause1[0] = -lfsrPrim.get(62); clause1[1] = lfsrPrim.get(51); clause1[2] = lfsrPrim.get(38); clause1[3] = m1;
+			clause2[0] = lfsrPrim.get(62); clause2[1] = -lfsrPrim.get(51); clause2[2] = lfsrPrim.get(38); clause2[3] = m1;
+			clause3[0] = lfsrPrim.get(62); clause3[1] = lfsrPrim.get(51); clause3[2] = -lfsrPrim.get(38); clause3[3] = m1;
+			clause4[0] = lfsrPrim.get(62); clause4[1] = lfsrPrim.get(51); clause4[2] = lfsrPrim.get(38); clause4[3] = -m1;
+			clause5[0] = lfsrPrim.get(62); clause5[1] = -lfsrPrim.get(51); clause5[2] = -lfsrPrim.get(38); clause5[3] = -m1;
+			clause6[0] = -lfsrPrim.get(62); clause6[1] = -lfsrPrim.get(51); clause6[2] = -lfsrPrim.get(38); clause6[3] = m1;
+			clause7[0] = -lfsrPrim.get(62); clause7[1] = -lfsrPrim.get(51); clause7[2] = lfsrPrim.get(38); clause7[3] = -m1;
+			clause8[0] = -lfsrPrim.get(62); clause8[1] = lfsrPrim.get(51); clause8[2] = -lfsrPrim.get(38); clause8[3] = -m1;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			clause1[0] = -m2; clause1[1] = lfsrPrim.get(23); clause1[2] = lfsrPrim.get(13); clause1[3] = m1;
+			clause2[0] = m2; clause2[1] = -lfsrPrim.get(23); clause2[2] = lfsrPrim.get(13); clause2[3] = m1;
+			clause3[0] = m2; clause3[1] = lfsrPrim.get(23); clause3[2] = -lfsrPrim.get(13); clause3[3] = m1;
+			clause4[0] = m2; clause4[1] = lfsrPrim.get(23); clause4[2] = lfsrPrim.get(13); clause4[3] = -m1;
+			clause5[0] = m2; clause5[1] = -lfsrPrim.get(23); clause5[2] = -lfsrPrim.get(13); clause5[3] = -m1;
+			clause6[0] = -m2; clause6[1] = -lfsrPrim.get(23); clause6[2] = -lfsrPrim.get(13); clause6[3] = m1;
+			clause7[0] = -m2; clause7[1] = -lfsrPrim.get(23); clause7[2] = lfsrPrim.get(13); clause7[3] = -m1;
+			clause8[0] = -m2; clause8[1] = lfsrPrim.get(23); clause8[2] = -lfsrPrim.get(13); clause8[3] = -m1;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			clause1 = new int[3];
+			clause2 = new int[3];
+			clause3 = new int[3];
+			clause4 = new int[3];
+			
+			
+			clause1[0] = -m2; clause1[1] = lfsrPrim.get(0); clause1[2]= (lfsrPrim.get(79)+1);
+			clause2[0] = m2; clause2[1] = -lfsrPrim.get(0); clause2[2]= (lfsrPrim.get(79)+1);
+			clause3[0] = m2; clause3[1] = lfsrPrim.get(0); clause3[2]= -(lfsrPrim.get(79)+1);
+			clause4[0] = -m2; clause4[1] = -lfsrPrim.get(0); clause4[2]= -(lfsrPrim.get(79)+1);
+			
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			// NFSR feedbackbased clauses   LFSR[0] ^ NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
+			//^ NFSR[0] ^ (NFSR[63] & NFSR[60]) ^ (NFSR[37] & NFSR[33]) ^ (NFSR[15] & NFSR[9])
+			//^ (NFSR[60] & NFSR[52] & NFSR[45]) ^ (NFSR[33] & NFSR[28] & NFSR[21]) 
+			//^ (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9]) ^ (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33]) 
+//			^ (NFSR[63] & NFSR[60] & NFSR[21] & NFSR[15]) ^ (NFSR[63] & NFSR[60] & NFSR[52] & NFSR[45] & NFSR[37])
+//			^ (NFSR[33] & NFSR[28] & NFSR[21] & NFSR[15] & NFSR[9])
+//			^ (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21]);
+//			
+			clause2 = new int[2];
+			clause3 = new int[2];
+			clause4 = new int[2];
+			clause5 = new int[2];
+			clause6 = new int[2];
+			clause7 = new int[2];
+			
+			//1
+			var1 = getNewVar();
+			clause1[0] = var1; clause1[1] = -nfsrPrim.get(63); clause1[2] = -nfsrPrim.get(60);
+			clause2[0] = -var1; clause2[1] = nfsrPrim.get(63);
+			clause3[0] = -var1; clause3[1] = nfsrPrim.get(60);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//2
+			var2 = getNewVar();
+			clause1[0]= var2; clause1[1] = -nfsrPrim.get(37); clause1[2] = -nfsrPrim.get(33); 
+			clause2[0] = -var2 ; clause2[1]= nfsrPrim.get(37); 
+			clause3[0] = -var2 ; clause3[1]= nfsrPrim.get(33); 
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//3
+			var3 = getNewVar();
+			clause1[0]= var3; clause1[1] = -nfsrPrim.get(15); clause1[2] = -nfsrPrim.get(9); 
+			clause2[0] = -var3 ; clause2[1]= nfsrPrim.get(15); 
+			clause3[0] = -var3 ; clause3[1]= lfsrPrim.get(9); 
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//4
+			var4 = getNewVar();
+			clause1 = new int[4];
+			clause1[0] = var4; clause1[1] = -nfsrPrim.get(60); clause1[2] = -nfsrPrim.get(52); clause1[3] = -nfsrPrim.get(45);
+			clause2[0] = -var4; clause2[1] = nfsrPrim.get(60);
+			clause3[0] = -var4; clause3[1] = nfsrPrim.get(52);
+			clause4[0] = -var4; clause4[1] = nfsrPrim.get(45);
+	
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//5
+			var5 = getNewVar();
+			clause1 = new int[4];
+			clause1[0] = var5; clause1[1] = -nfsrPrim.get(33); clause1[2] = -nfsrPrim.get(28); clause1[3] = -nfsrPrim.get(21);
+			clause2[0] = -var5; clause2[1] = nfsrPrim.get(33);
+			clause3[0] = -var5; clause3[1] = nfsrPrim.get(28);
+			clause4[0] = -var5; clause4[1] = nfsrPrim.get(21);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//6 (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9])
+			var6 = getNewVar();
+			clause1 = new int[5];
+			clause1[0] = var6; clause1[1]= -nfsrPrim.get(63); clause1[2] = -nfsrPrim.get(45); clause1[3] = -nfsrPrim.get(28); clause1[4] = -nfsrPrim.get(9);
+			clause2[0] = -var6; clause2[1] = nfsrPrim.get(63);
+			clause3[0] = -var6;  clause3[1] = nfsrPrim.get(45);
+			clause4[0] = -var6; clause4[1] = nfsrPrim.get(28);
+			clause5[0] = -var6; clause5[1] = nfsrPrim.get(9);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//7 (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33])
+			var7 = getNewVar();
+			
+			clause1[0] = var7; clause1[1]= -nfsrPrim.get(60); clause1[2] = -nfsrPrim.get(52); clause1[3] = -nfsrPrim.get(37); clause1[4] = -nfsrPrim.get(33);
+			clause2[0] = -var7; clause2[1] = nfsrPrim.get(60);
+			clause3[0] = -var7;  clause3[1] = nfsrPrim.get(52);
+			clause4[0] = -var7; clause4[1] = nfsrPrim.get(37);
+			clause5[0] = -var7; clause5[1] = nfsrPrim.get(33);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//8 (NFSR[63] & NFSR[60] & NFSR[21] & NFSR[15])
+			var8 = getNewVar();
+			clause1[0] = var8; clause1[1]= -nfsrPrim.get(63); clause1[2] = -nfsrPrim.get(60); clause1[3] = -nfsrPrim.get(21); clause1[4] = -nfsrPrim.get(15);
+			clause2[0] = -var8; clause2[1] = nfsrPrim.get(63);
+			clause3[0] = -var8;  clause3[1] = nfsrPrim.get(60);
+			clause4[0] = -var8; clause4[1] = nfsrPrim.get(21);
+			clause5[0] = -var8; clause5[1] = nfsrPrim.get(15);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//9 (NFSR[63] & NFSR[60] & NFSR[52] & NFSR[45] & NFSR[37])
+			int var9 = getNewVar();
+			clause1 = new int[6];
+			clause1[0] = var9; clause1[1]= -nfsrPrim.get(63); clause1[2] = -nfsrPrim.get(60); clause1[3] = -nfsrPrim.get(52); clause1[4] = -nfsrPrim.get(45); clause1[5] =-nfsrPrim.get(37);
+			clause2[0] = -var9; clause2[1] = nfsrPrim.get(63);
+			clause3[0] = -var9;  clause3[1] = nfsrPrim.get(60);
+			clause4[0] = -var9; clause4[1] = nfsrPrim.get(52);
+			clause5[0] = -var9; clause5[1] = nfsrPrim.get(45);
+			clause6[0] = -var9; clause6[1] = nfsrPrim.get(37);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//10 (NFSR[33] & NFSR[28] & NFSR[21] & NFSR[15] & NFSR[9])
+		
+			int var10 = getNewVar();
+			clause1[0] = var10; clause1[1]= -nfsrPrim.get(33); clause1[2] = -nfsrPrim.get(28); clause1[3] = -nfsrPrim.get(21); clause1[4] = -nfsrPrim.get(15); clause1[5] =-nfsrPrim.get(9);
+			clause2[0] = -var10; clause2[1] = nfsrPrim.get(33);
+			clause3[0] = -var10;  clause3[1] = nfsrPrim.get(28);
+			clause4[0] = -var10; clause4[1] = nfsrPrim.get(21);
+			clause5[0] = -var10; clause5[1] = nfsrPrim.get(15);
+			clause6[0] = -var10; clause6[1] = nfsrPrim.get(9);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//11 (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21])
+			int var11 = getNewVar();
+			clause1 = new int[7];
+			clause1[0] = var11; clause1[1]= -nfsrPrim.get(52); clause1[2] = -nfsrPrim.get(45); clause1[3] = -nfsrPrim.get(37);			
+								clause1[4] = -nfsrPrim.get(33); clause1[5] =-nfsrPrim.get(28); clause1[6] = -nfsrPrim.get(21);
+			
+			clause2[0] = -var11; clause2[1] = nfsrPrim.get(52);
+			clause3[0] = -var11;  clause3[1] = nfsrPrim.get(45);
+			clause4[0] = -var11; clause4[1] = nfsrPrim.get(37);
+			clause5[0] = -var11; clause5[1] = nfsrPrim.get(33);
+			clause6[0] = -var11; clause6[1] = nfsrPrim.get(28);
+			clause7[0] = -var11; clause7[1] = nfsrPrim.get(21);
+			
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//Nfsr Feedbackgenerated clauses cutting
+					//LFSR[0] ^ NFSR[62] ^ NFSR[60] ^ NFSR[52] ^ NFSR[45] ^ NFSR[37] ^ NFSR[33] ^ NFSR[28] ^ NFSR[21] ^ NFSR[14] ^ NFSR[9]
+					//^ NFSR[0] ^ (NFSR[63] & NFSR[60]) ^ (NFSR[37] & NFSR[33]) ^ (NFSR[15] & NFSR[9])
+					//^ (NFSR[60] & NFSR[52] & NFSR[45]) ^ (NFSR[33] & NFSR[28] & NFSR[21]) 
+					//^ (NFSR[63] & NFSR[45] & NFSR[28] & NFSR[9]) ^ (NFSR[60] & NFSR[52] & NFSR[37] & NFSR[33]) 
+					//^ (NFSR[63] & NFSR[60] & NFSR[21] & NFSR[15]) ^ (NFSR[63] & NFSR[60] & NFSR[52] & NFSR[45] & NFSR[37])
+					//^ (NFSR[33] & NFSR[28] & NFSR[21] & NFSR[15] & NFSR[9])
+					//^ (NFSR[52] & NFSR[45] & NFSR[37] & NFSR[33] & NFSR[28] & NFSR[21]);
+			
+			m1 = getCutVar();
+			m2 = getCutVar();
+			m3 = getCutVar();
+			m4 = getCutVar();
+			m5 = getCutVar();
+			m6 = getCutVar();
+			m7 = getCutVar();
+			int m8 = getCutVar();
+			int m9 = getCutVar();
+			int m10 = getCutVar();
+
+					
+			clause1 = new int[4];
+			clause2 = new int[4];
+			clause3 = new int[4];
+			clause4 = new int[4];
+			clause5 = new int[4];
+			clause6 = new int[4];
+			clause7 = new int[4];
+			clause8 = new int[4];
+			
+			//NR1     	 0 62 60 m1
+			clause1[0] = -lfsrPrim.get(0); clause1[1] = nfsrPrim.get(62); clause1[2] = nfsrPrim.get(60); clause1[3] = m1;
+			clause2[0] = lfsrPrim.get(0); clause2[1] = -nfsrPrim.get(62); clause2[2] = nfsrPrim.get(60); clause2[3] = m1;
+			clause3[0] = lfsrPrim.get(0); clause3[1] = nfsrPrim.get(62); clause3[2] = -nfsrPrim.get(60); clause3[3] = m1;
+			clause4[0] = lfsrPrim.get(0); clause4[1] = nfsrPrim.get(62); clause4[2] = nfsrPrim.get(60); clause4[3] = -m1;
+			clause5[0] = lfsrPrim.get(0); clause5[1] = -nfsrPrim.get(62); clause5[2] = -nfsrPrim.get(60); clause5[3] = -m1;
+			clause6[0] = -lfsrPrim.get(0); clause6[1] = -nfsrPrim.get(62); clause6[2] = -nfsrPrim.get(60); clause6[3] = m1;
+			clause7[0] = -lfsrPrim.get(0); clause7[1] = -nfsrPrim.get(62); clause7[2] = nfsrPrim.get(60); clause7[3] = -m1;
+			clause8[0] = -lfsrPrim.get(0); clause8[1] = nfsrPrim.get(62); clause8[2] = -nfsrPrim.get(60); clause8[3] = -m1;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//NR2   52 45
+			clause1[0] = -m2; clause1[1] = nfsrPrim.get(52); clause1[2] = nfsrPrim.get(45); clause1[3] = m1;
+			clause2[0] = m2; clause2[1] = -nfsrPrim.get(52); clause2[2] = nfsrPrim.get(45); clause2[3] = m1;
+			clause3[0] = m2; clause3[1] = nfsrPrim.get(52); clause3[2] = -nfsrPrim.get(45); clause3[3] = m1;
+			clause4[0] = m2; clause4[1] = nfsrPrim.get(52); clause4[2] = nfsrPrim.get(45); clause4[3] = -m1;
+			clause5[0] = m2; clause5[1] = -nfsrPrim.get(52); clause5[2] = -nfsrPrim.get(45); clause5[3] = -m1;
+			clause6[0] = -m2; clause6[1] = -nfsrPrim.get(52); clause6[2] = -nfsrPrim.get(45); clause6[3] = m1;
+			clause7[0] = -m2; clause7[1] = -nfsrPrim.get(52); clause7[2] = nfsrPrim.get(45); clause7[3] = -m1;
+			clause8[0] = -m2; clause8[1] = nfsrPrim.get(52); clause8[2] = -nfsrPrim.get(45); clause8[3] = -m1;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//Nr3  NFSR[37] ^ NFSR[33]
+			clause1[0] = -m2; clause1[1] = nfsrPrim.get(37); clause1[2] = nfsrPrim.get(33); clause1[3] = m3;
+			clause2[0] = m2; clause2[1] = -nfsrPrim.get(37); clause2[2] = nfsrPrim.get(33); clause2[3] = m3;
+			clause3[0] = m2; clause3[1] = nfsrPrim.get(37); clause3[2] = -nfsrPrim.get(33); clause3[3] = m3;
+			clause4[0] = m2; clause4[1] = nfsrPrim.get(37); clause4[2] = nfsrPrim.get(33); clause4[3] = -m3;
+			clause5[0] = m2; clause5[1] = -nfsrPrim.get(37); clause5[2] = -nfsrPrim.get(33); clause5[3] = -m3;
+			clause6[0] = -m2; clause6[1] = -nfsrPrim.get(37); clause6[2] = -nfsrPrim.get(33); clause6[3] = m3;
+			clause7[0] = -m2; clause7[1] = -nfsrPrim.get(37); clause7[2] = nfsrPrim.get(33); clause7[3] = -m3;
+			clause8[0] = -m2; clause8[1] = nfsrPrim.get(37); clause8[2] = -nfsrPrim.get(33); clause8[3] = -m3;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR4 NFSR[28] ^ NFSR[21]
+			clause1[0] = -m4; clause1[1] = nfsrPrim.get(28); clause1[2] = nfsrPrim.get(21); clause1[3] = m3;
+			clause2[0] = m4; clause2[1] = -nfsrPrim.get(28); clause2[2] = nfsrPrim.get(21); clause2[3] = m3;
+			clause3[0] = m4; clause3[1] = nfsrPrim.get(28); clause3[2] = -nfsrPrim.get(21); clause3[3] = m3;
+			clause4[0] = m4; clause4[1] = nfsrPrim.get(28); clause4[2] = nfsrPrim.get(21); clause4[3] = -m3;
+			clause5[0] = m4; clause5[1] = -nfsrPrim.get(28); clause5[2] = -nfsrPrim.get(21); clause5[3] = -m3;
+			clause6[0] = -m4; clause6[1] = -nfsrPrim.get(28); clause6[2] = -nfsrPrim.get(21); clause6[3] = m3;
+			clause7[0] = -m4; clause7[1] = -nfsrPrim.get(28); clause7[2] = nfsrPrim.get(21); clause7[3] = -m3;
+			clause8[0] = -m4; clause8[1] = nfsrPrim.get(28); clause8[2] = -nfsrPrim.get(21); clause8[3] = -m3;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR5 NFSR[14] ^ NFSR[9]
+			clause1[0] = -m4; clause1[1] = nfsrPrim.get(14); clause1[2] = nfsrPrim.get(9); clause1[3] = m5;
+			clause2[0] = m4; clause2[1] = -nfsrPrim.get(14); clause2[2] = nfsrPrim.get(9); clause2[3] = m5;
+			clause3[0] = m4; clause3[1] = nfsrPrim.get(14); clause3[2] = -nfsrPrim.get(9); clause3[3] = m5;
+			clause4[0] = m4; clause4[1] = nfsrPrim.get(14); clause4[2] = nfsrPrim.get(9); clause4[3] = -m5;
+			clause5[0] = m4; clause5[1] = -nfsrPrim.get(14); clause5[2] = -nfsrPrim.get(9); clause5[3] = -m5;
+			clause6[0] = -m4; clause6[1] = -nfsrPrim.get(14); clause6[2] = -nfsrPrim.get(9); clause6[3] = m5;
+			clause7[0] = -m4; clause7[1] = -nfsrPrim.get(14); clause7[2] = nfsrPrim.get(9); clause7[3] = -m5;
+			clause8[0] = -m4; clause8[1] = nfsrPrim.get(14); clause8[2] = -nfsrPrim.get(9); clause8[3] = -m5;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR6 NFSR[0] ^ var1
+			clause1[0] = -m6; clause1[1] = nfsrPrim.get(0); clause1[2] = var1; clause1[3] = m5;
+			clause2[0] = m6; clause2[1] = -nfsrPrim.get(0); clause2[2] = var1; clause2[3] = m5;
+			clause3[0] = m6; clause3[1] = nfsrPrim.get(0); clause3[2] = -var1; clause3[3] = m5;
+			clause4[0] = m6; clause4[1] = nfsrPrim.get(0); clause4[2] = var1; clause4[3] = -m5;
+			clause5[0] = m6; clause5[1] = -nfsrPrim.get(0); clause5[2] = -var1; clause5[3] = -m5;
+			clause6[0] = -m6; clause6[1] = -nfsrPrim.get(0); clause6[2] = -var1; clause6[3] = m5;
+			clause7[0] = -m6; clause7[1] = -nfsrPrim.get(0); clause7[2] = var1; clause7[3] = -m5;
+			clause8[0] = -m6; clause8[1] = nfsrPrim.get(0); clause8[2] = -var1; clause8[3] = -m5;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//NR7 var2 ^ var3
+			clause1[0] = -m6; clause1[1] = var2; clause1[2] = var3; clause1[3] = m7;
+			clause2[0] = m6; clause2[1] = -var2; clause2[2] = var3; clause2[3] = m7;
+			clause3[0] = m6; clause3[1] = var2; clause3[2] = -var3; clause3[3] = m7;
+			clause4[0] = m6; clause4[1] = var2; clause4[2] = var3; clause4[3] = -m7;
+			clause5[0] = m6; clause5[1] = -var2; clause5[2] = -var3; clause5[3] = -m7;
+			clause6[0] = -m6; clause6[1] = -var2; clause6[2] = -var3; clause6[3] = m7;
+			clause7[0] = -m6; clause7[1] = -var2; clause7[2] = var3; clause7[3] = -m7;
+			clause8[0] = -m6; clause8[1] = var2; clause8[2] = -var3; clause8[3] = -m7;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR8 var4 ^ var5
+			clause1[0] = -m8; clause1[1] = var4; clause1[2] = var5; clause1[3] = m7;
+			clause2[0] = m8; clause2[1] = -var4; clause2[2] = var5; clause2[3] = m7;
+			clause3[0] = m8; clause3[1] = var4; clause3[2] = -var5; clause3[3] = m7;
+			clause4[0] = m8; clause4[1] = var4; clause4[2] = var5; clause4[3] = -m7;
+			clause5[0] = m8; clause5[1] = -var4; clause5[2] = -var5; clause5[3] = -m7;
+			clause6[0] = -m8; clause6[1] = -var4; clause6[2] = -var5; clause6[3] = m7;
+			clause7[0] = -m8; clause7[1] = -var4; clause7[2] = var5; clause7[3] = -m7;
+			clause8[0] = -m8; clause8[1] = var4; clause8[2] = -var5; clause8[3] = -m7;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR9 var6 ^ var7
+			clause1[0] = -m8; clause1[1] = var6; clause1[2] = var7; clause1[3] = m9;
+			clause2[0] = m8; clause2[1] = -var6; clause2[2] = var7; clause2[3] = m9;
+			clause3[0] = m8; clause3[1] = var6; clause3[2] = -var7; clause3[3] = m9;
+			clause4[0] = m8; clause4[1] = var6; clause4[2] = var7; clause4[3] = -m9;
+			clause5[0] = m8; clause5[1] = -var6; clause5[2] = -var7; clause5[3] = -m9;
+			clause6[0] = -m8; clause6[1] = -var6; clause6[2] = -var7; clause6[3] = m9;
+			clause7[0] = -m8; clause7[1] = -var6; clause7[2] = var7; clause7[3] = -m9;
+			clause8[0] = -m8; clause8[1] = var6; clause8[2] = -var7; clause8[3] = -m9;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			
+			//NR10 var8 ^ var9
+			clause1[0] = -m10; clause1[1] = var8; clause1[2] = var9; clause1[3] = m9;
+			clause2[0] = m10; clause2[1] = -var8; clause2[2] = var9; clause2[3] = m9;
+			clause3[0] = m10; clause3[1] = var8; clause3[2] = -var9; clause3[3] = m9;
+			clause4[0] = m10; clause4[1] = var8; clause4[2] = var9; clause4[3] = -m9;
+			clause5[0] = m10; clause5[1] = -var8; clause5[2] = -var9; clause5[3] = -m9;
+			clause6[0] = -m10; clause6[1] = -var8; clause6[2] = -var9; clause6[3] = m9;
+			clause7[0] = -m10; clause7[1] = -var8; clause7[2] = var9; clause7[3] = -m9;
+			clause8[0] = -m10; clause8[1] = var8; clause8[2] = -var9; clause8[3] = -m9;
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
+			//NR11 var10 ^ var11 ^ nfsrPrim.get(79)+1
+			clause1[0] = -m10; clause1[1] = var10; clause1[2] = var11; clause1[3] = (nfsrPrim.get(79)+1);
+			clause2[0] = m10; clause2[1] = -var10; clause2[2] = var11; clause2[3] = (nfsrPrim.get(79)+1);
+			clause3[0] = m10; clause3[1] = var10; clause3[2] = -var11; clause3[3] = (nfsrPrim.get(79)+1);
+			clause4[0] = m10; clause4[1] = var10; clause4[2] = var11; clause4[3] = -(nfsrPrim.get(79)+1);
+			clause5[0] = m10; clause5[1] = -var10; clause5[2] = -var11; clause5[3] = -(nfsrPrim.get(79)+1);
+			clause6[0] = -m10; clause6[1] = -var10; clause6[2] = -var11; clause6[3] = (nfsrPrim.get(79)+1);
+			clause7[0] = -m10; clause7[1] = -var10; clause7[2] = var11; clause7[3] = -(nfsrPrim.get(79)+1);
+			clause8[0] = -m10; clause8[1] = var10; clause8[2] = -var11; clause8[3] = -(nfsrPrim.get(79)+1);
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+				solver.addClause(new VecInt(clause3));
+				solver.addClause(new VecInt(clause4));
+				solver.addClause(new VecInt(clause5));
+				solver.addClause(new VecInt(clause6));
+				solver.addClause(new VecInt(clause7));
+				solver.addClause(new VecInt(clause8));
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
@@ -506,12 +1067,10 @@ public class Grain {
 
 		Grain g = new Grain();
 		
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 50; i++) {
 
-			if(g.z()){
-				g.addClauses(1);
-			}else
-			g.addClauses(0);
+			
+			g.addClauses();
 			
 			g.clockOneTime();
 			g.lfsrPrim.clock();
