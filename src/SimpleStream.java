@@ -13,8 +13,13 @@ public class SimpleStream {
 	boolean lfsr[] = new boolean[10]; //lfsr
 	ArrayPrimitive lfsrPrim = new ArrayPrimitive(10, "1"); //Eigene Datenstruktur für die Eingabe des Sat4J's
 	ISolver solver = SolverFactory.newDefault(); //Satsolver
+	static int cutVar = 1;
 	
-	String key = "1000101100";
+	//String key = "0110110101";
+	//String key = "0011100001";
+	
+	String key = "0111001011";
+	//String key = "0010011111";
 	
 	//Konstruktor der den lsfr mit dem übergeben Key initialisiert
 	SimpleStream(){
@@ -23,11 +28,22 @@ public class SimpleStream {
 		}
 	}
 	
-	//feedbackfunktion
+	
+	public static int getCutVar(){
+		String outPut = "4" + cutVar;
+		cutVar += 1;
+		return Integer.parseInt(outPut);
+	}
+	
+	
+	//feedback-funktion
 	public boolean f(){
-		boolean z;
-		z = lfsr[0] ^ lfsr[3] ^ lfsr[9] ^lfsr[5];
-		return z;
+		return lfsr[0] ^ lfsr[3] ^ lfsr[9] ^lfsr[5]^ lfsr[7];
+	}
+	
+	//output-function
+	public boolean output(){
+		return lfsr[1] ^ lfsr[6];
 	}
 	
 	//einmaliges clocken der Stromschiffre
@@ -37,12 +53,13 @@ public class SimpleStream {
 		for (int i = 0; i < lfsr.length -1; i++) {
 			lfsr[i] = lfsr[i+1];
 			
-			lfsr[9] = feedback;
+			
 		}
+		lfsr[9] = feedback;
 	}
 	
 	//einfügung der Klauseln in den Satsolver
-	public void addClaususSimple(int z){
+	public void addClaususSimple(){
 		
 		int[] clause1 = new int[4];
 		int[] clause2 = new int[4];
@@ -53,15 +70,58 @@ public class SimpleStream {
 		int[] clause7 = new int[4];
 		int[] clause8 = new int[4];
 		
-		if(z == 1){						//Falls Feedback == 1 füge enstprechende Klauseln nach Wahrheitstabelle ein.
-			clause1[0] = -lfsrPrim.get(0); clause1[1] = -lfsrPrim.get(3); clause1[2] = lfsrPrim.get(9); clause1[3] = lfsrPrim.get(5);
-			clause2[0] = -lfsrPrim.get(0); clause2[1] = lfsrPrim.get(3); clause2[2] = -lfsrPrim.get(9); clause2[3] = lfsrPrim.get(5);
-			clause3[0] = -lfsrPrim.get(0); clause3[1] = lfsrPrim.get(3); clause3[2] = lfsrPrim.get(9); clause3[3] = -lfsrPrim.get(5);
-			clause4[0] = -lfsrPrim.get(0); clause4[1] = -lfsrPrim.get(3); clause4[2] = -lfsrPrim.get(9); clause4[3] = -lfsrPrim.get(5);
-			clause5[0] = lfsrPrim.get(0); clause5[1] = lfsrPrim.get(3); clause5[2] = lfsrPrim.get(9); clause5[3] = lfsrPrim.get(5);
-			clause6[0] = lfsrPrim.get(0); clause6[1] = -lfsrPrim.get(3); clause6[2] = -lfsrPrim.get(9); clause6[3] = lfsrPrim.get(5);
-			clause7[0] = lfsrPrim.get(0); clause7[1] = -lfsrPrim.get(3); clause7[2] = lfsrPrim.get(9); clause7[3] = -lfsrPrim.get(5);
-			clause8[0] = lfsrPrim.get(0); clause8[1] = lfsrPrim.get(3); clause8[2] = -lfsrPrim.get(9); clause8[3] = -lfsrPrim.get(5);
+		int m1 = getCutVar();
+		
+				//feedback based clauses
+			clause1[0] = -lfsrPrim.get(0); clause1[1] = lfsrPrim.get(3); clause1[2] = lfsrPrim.get(9); clause1[3] = m1;
+			clause2[0] = lfsrPrim.get(0); clause2[1] = -lfsrPrim.get(3); clause2[2] = lfsrPrim.get(9); clause2[3] = m1;
+			clause3[0] = lfsrPrim.get(0); clause3[1] = lfsrPrim.get(3); clause3[2] = -lfsrPrim.get(9); clause3[3] = m1;
+			clause4[0] = lfsrPrim.get(0); clause4[1] = lfsrPrim.get(3); clause4[2] = lfsrPrim.get(9); clause4[3] = -m1;
+			clause5[0] = lfsrPrim.get(0); clause5[1] = -lfsrPrim.get(3); clause5[2] = -lfsrPrim.get(9); clause5[3] = -m1;
+			clause6[0] = -lfsrPrim.get(0); clause6[1] = -lfsrPrim.get(3); clause6[2] = -lfsrPrim.get(9); clause6[3] = m1;
+			clause7[0] = -lfsrPrim.get(0); clause7[1] = -lfsrPrim.get(3); clause7[2] = lfsrPrim.get(9); clause7[3] = -m1;
+			clause8[0] = -lfsrPrim.get(0); clause8[1] = lfsrPrim.get(3); clause8[2] = -lfsrPrim.get(9); clause8[3] = -m1;
+			
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause1[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause2[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause3[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause4[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause5[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause8[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause7[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause6[i]+" ");
+				
+			}
+			System.out.println(0);
 			try {
 				solver.addClause(new VecInt(clause1));
 				solver.addClause(new VecInt(clause2));
@@ -74,16 +134,59 @@ public class SimpleStream {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-		}
-		else{						//ansonsten feedback 0 und füge dementprechend Klausen im Satsolver ein
-			clause1[0] = -lfsrPrim.get(0); clause1[1] = lfsrPrim.get(3); clause1[2] = lfsrPrim.get(9); clause1[3] = lfsrPrim.get(5);
-			clause2[0] = lfsrPrim.get(0); clause2[1] = -lfsrPrim.get(3); clause2[2] = lfsrPrim.get(9); clause2[3] = lfsrPrim.get(5);
-			clause3[0] = lfsrPrim.get(0); clause3[1] = lfsrPrim.get(3); clause3[2] = -lfsrPrim.get(9); clause3[3] = lfsrPrim.get(5);
-			clause4[0] = lfsrPrim.get(0); clause4[1] = lfsrPrim.get(3); clause4[2] = lfsrPrim.get(9); clause4[3] = -lfsrPrim.get(5);
-			clause5[0] = lfsrPrim.get(0); clause5[1] = -lfsrPrim.get(3); clause5[2] = -lfsrPrim.get(9); clause5[3] = -lfsrPrim.get(5);
-			clause6[0] = -lfsrPrim.get(0); clause6[1] = -lfsrPrim.get(3); clause6[2] = -lfsrPrim.get(9); clause6[3] = lfsrPrim.get(5);
-			clause7[0] = -lfsrPrim.get(0); clause7[1] = -lfsrPrim.get(3); clause7[2] = lfsrPrim.get(9); clause7[3] = -lfsrPrim.get(5);
-			clause8[0] = -lfsrPrim.get(0); clause8[1] = lfsrPrim.get(3); clause8[2] = -lfsrPrim.get(9); clause8[3] = -lfsrPrim.get(5);
+		
+			
+			clause1[0] = -lfsrPrim.get(5); clause1[1] = lfsrPrim.get(7); clause1[2] = lfsrPrim.get(9)+1; clause1[3] = m1;
+			clause2[0] = lfsrPrim.get(5); clause2[1] = -lfsrPrim.get(7); clause2[2] = lfsrPrim.get(9)+1; clause2[3] = m1;
+			clause3[0] = lfsrPrim.get(5); clause3[1] = lfsrPrim.get(7); clause3[2] = -(lfsrPrim.get(9)+1); clause3[3] = m1;
+			clause4[0] = lfsrPrim.get(5); clause4[1] = lfsrPrim.get(7); clause4[2] = lfsrPrim.get(9)+1; clause4[3] = -m1;
+			clause5[0] = lfsrPrim.get(5); clause5[1] = -lfsrPrim.get(7); clause5[2] = -(lfsrPrim.get(9)+1); clause5[3] = -m1;
+			clause6[0] = -lfsrPrim.get(5); clause6[1] = -lfsrPrim.get(7); clause6[2] = -(lfsrPrim.get(9)+1); clause6[3] = m1;
+			clause7[0] = -lfsrPrim.get(5); clause7[1] = -lfsrPrim.get(7); clause7[2] = lfsrPrim.get(9)+1; clause7[3] = -m1;
+			clause8[0] = -lfsrPrim.get(5); clause8[1] = lfsrPrim.get(7); clause8[2] = -(lfsrPrim.get(9)+1); clause8[3] = -m1;
+			
+
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause1[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause2[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause3[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause4[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause5[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause8[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause7[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 4; i++) {
+				System.out.print(clause6[i]+" ");
+				
+			}
+			System.out.println(0);
+			
 			try {
 				solver.addClause(new VecInt(clause1));
 				solver.addClause(new VecInt(clause2));
@@ -96,7 +199,36 @@ public class SimpleStream {
 			} catch (ContradictionException e) {
 				e.printStackTrace();
 			}
-		}
+			
+			
+			//output based clauses
+			clause1 = new int[2];
+			clause2 = new int[2];
+			
+			
+			if(this.output()){
+				clause1[0] = -lfsrPrim.get(1); clause1[1] = lfsrPrim.get(6);
+				clause2[0] = lfsrPrim.get(1); clause2[1] = -lfsrPrim.get(6);
+			}else{
+				clause1[0] = lfsrPrim.get(1); clause1[1] = lfsrPrim.get(6);
+				clause2[0] = -lfsrPrim.get(1); clause2[1] = -lfsrPrim.get(6);
+			}
+			for (int i = 0; i < 2; i++) {
+				System.out.print(clause1[i]+" ");
+				
+			}
+			System.out.println(0);
+			for (int i = 0; i < 2; i++) {
+				System.out.print(clause2[i]+" ");
+				
+			}
+			System.out.println(0);
+			try {
+				solver.addClause(new VecInt(clause1));
+				solver.addClause(new VecInt(clause2));
+			} catch (ContradictionException e) {
+				e.printStackTrace();
+			}
 	}
 	
 	//Funktion zum Finden der möglichen Belegungen
@@ -107,8 +239,13 @@ public class SimpleStream {
 		
 		IProblem problem = solver;
 		try {
-			if(problem.isSatisfiable())			//Findung einer möglichen Belgung
+			if(problem.isSatisfiable()){			//Findung einer möglichen Belgung
 				 model = problem.findModel();	// und speicher in model[]
+			
+			}else{
+				System.out.println("es wurde kein model gefunden");
+			return;
+			}
 			
 		} catch (TimeoutException e) {
 			e.printStackTrace();
@@ -147,7 +284,7 @@ public class SimpleStream {
 		int counter = 0;
 		int tmp;
 		
-		for (int i = 1; i < key.length+1; i++) {  		//Aufüllen der Ergebnisses (key[])
+		for (int i = 1; i < key.length+1; i++) {  		//Aufüllen des Ergebnisses (key[])
 			tmp = Integer.parseInt(lfsr.get(counter));	
 			if(tmp == i){									
 				key[i-1] = 0; 							//0 wenn die Variable in lfsr<> ist
@@ -167,22 +304,32 @@ public class SimpleStream {
 	public static void main(String[] args){
 		
 		SimpleStream ss = new SimpleStream();
-		
-		for (int i = 0; i < 200000; i++) {
+		int[] keystream = new int[20];
+		for (int i = 0; i < 100; i++) {
 
-			if(ss.f()){
-				ss.addClaususSimple(1);
-			}else{
-			ss.addClaususSimple(0);
-			}
-			
+			ss.addClaususSimple();
 			ss.clockSimpleStream();
+			
+			if(i<20){
+				if(ss.output()){
+					keystream[i] = 1;
+				}else{
+					keystream[i] = 0;
+				}
+			}
 			ss.lfsrPrim.clock();
+			
+			
 		}
 		
 		ss.solutionFinderSimple();
+		System.out.println();
+		System.out.println("keystream:");
+		for (int i = 0; i < keystream.length; i++) {
+			System.out.print(keystream[i]);
+		}
 	}
 	
 	
-	
+	//01100010011111111011
 }
