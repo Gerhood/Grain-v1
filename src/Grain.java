@@ -386,6 +386,7 @@ public class Grain {
 				e.printStackTrace();
 			}
 			
+			
 			//7 out of 7 cutting down  outputbased
 			clause1[0] = -m6; clause1[1] = nfsrPrim.get(31); clause1[2] = nfsrPrim.get(43); clause1[3] = m7;
 			clause2[0] = m6; clause2[1] = -nfsrPrim.get(31); clause2[2] = nfsrPrim.get(43); clause2[3] = m7;
@@ -1076,6 +1077,58 @@ public class Grain {
 			g.lfsrPrim.clock();
 			g.nfsrPrim.clock();
 		}
+//		try {
+//			g.solver.addClause(new VecInt(new int[]{-11}));
+//			g.solver.addClause(new VecInt(new int[]{-12}));
+//			g.solver.addClause(new VecInt(new int[]{-13}));
+//			g.solver.addClause(new VecInt(new int[]{-14}));
+//			g.solver.addClause(new VecInt(new int[]{-15}));
+//			g.solver.addClause(new VecInt(new int[]{-16}));
+//			g.solver.addClause(new VecInt(new int[]{-17}));
+//			
+//			
+//			
+//			g.solver.addClause(new VecInt(new int[]{-21}));
+//			g.solver.addClause(new VecInt(new int[]{-22}));
+//			g.solver.addClause(new VecInt(new int[]{-23}));
+//			g.solver.addClause(new VecInt(new int[]{-24}));
+//			g.solver.addClause(new VecInt(new int[]{-25}));
+//			g.solver.addClause(new VecInt(new int[]{-26}));
+//			g.solver.addClause(new VecInt(new int[]{-27}));
+//			g.solver.addClause(new VecInt(new int[]{28}));
+//			g.solver.addClause(new VecInt(new int[]{-29}));
+//			g.solver.addClause(new VecInt(new int[]{-210}));
+//			g.solver.addClause(new VecInt(new int[]{211}));
+//			g.solver.addClause(new VecInt(new int[]{-212}));
+//			g.solver.addClause(new VecInt(new int[]{-213}));
+//			g.solver.addClause(new VecInt(new int[]{-214}));
+//			g.solver.addClause(new VecInt(new int[]{215}));
+//			g.solver.addClause(new VecInt(new int[]{216}));
+//			g.solver.addClause(new VecInt(new int[]{-217}));
+//			g.solver.addClause(new VecInt(new int[]{218}));
+//			g.solver.addClause(new VecInt(new int[]{-219}));
+//			g.solver.addClause(new VecInt(new int[]{-220}));
+//			g.solver.addClause(new VecInt(new int[]{-221}));
+//			g.solver.addClause(new VecInt(new int[]{222}));
+//			g.solver.addClause(new VecInt(new int[]{-223}));
+//			g.solver.addClause(new VecInt(new int[]{224}));
+//			g.solver.addClause(new VecInt(new int[]{-225}));
+//			g.solver.addClause(new VecInt(new int[]{226}));
+//			g.solver.addClause(new VecInt(new int[]{227}));
+//			g.solver.addClause(new VecInt(new int[]{-228}));
+//			g.solver.addClause(new VecInt(new int[]{-229}));
+//			g.solver.addClause(new VecInt(new int[]{230}));
+//			g.solver.addClause(new VecInt(new int[]{231}));
+//			g.solver.addClause(new VecInt(new int[]{232}));
+//			g.solver.addClause(new VecInt(new int[]{233}));
+		
+//		
+//		} catch (ContradictionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		String key = "00000001001000110100010101100111100010011010101111001101111011110001001000110100";
+//		String IV = "0000000100100011010001010110011110001001101010111100110111101111";
 //		System.out.println();
 		g.solutionFinder();
 //		System.out.println("\n"+ cutVar+", "+newVar);

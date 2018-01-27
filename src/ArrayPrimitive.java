@@ -7,7 +7,7 @@ public class ArrayPrimitive {
 	public ArrayPrimitive(int length, String Prefix) {
 		array = new int[length];
 		for (int i = 0; i < array.length; i++) {
-			array[i] = i+1;
+			array[i] = i;
 		}
 		this.preFix = Prefix;
 	}
