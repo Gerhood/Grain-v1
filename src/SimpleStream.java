@@ -207,11 +207,11 @@ public class SimpleStream {
 			
 			
 			if(this.output()){
-				clause1[0] = -lfsrPrim.get(1); clause1[1] = lfsrPrim.get(6);
-				clause2[0] = lfsrPrim.get(1); clause2[1] = -lfsrPrim.get(6);
+				clause1[0] = -lfsrPrim.get(1); clause1[1] = -lfsrPrim.get(6);
+				clause2[0] = lfsrPrim.get(1); clause2[1] = lfsrPrim.get(6);
 			}else{
-				clause1[0] = lfsrPrim.get(1); clause1[1] = lfsrPrim.get(6);
-				clause2[0] = -lfsrPrim.get(1); clause2[1] = -lfsrPrim.get(6);
+				clause1[0] = lfsrPrim.get(1); clause1[1] = -lfsrPrim.get(6);
+				clause2[0] = -lfsrPrim.get(1); clause2[1] = lfsrPrim.get(6);
 			}
 			for (int i = 0; i < 2; i++) {
 				System.out.print(clause1[i]+" ");
@@ -321,6 +321,13 @@ public class SimpleStream {
 			
 			
 		}
+//		try {
+////			ss.solver.addClause(new VecInt(new int[]{12}));
+//			ss.solver.addClause(new VecInt(new int[]{-11}));
+//		} catch (ContradictionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		ss.solutionFinderSimple();
 		System.out.println();
@@ -330,6 +337,6 @@ public class SimpleStream {
 		}
 	}
 	
-	
-	//01100010011111111011
+	//"0111001011"
+
 }
